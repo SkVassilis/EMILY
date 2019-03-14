@@ -1,0 +1,52 @@
+1.
+
+CORE =     ['C','C','C','C','C','C','F','D','DR','D','DR']
+MAX_POOL = [  0,  8,  0,  6,  0,  4, 0 ,  0,  0 ,  0,  0 ]
+FILTERS =  [ 32, 32, 64, 64,128,128, 0 ,256, 0.5, 128, 0.5]
+K_SIZE =   [256,128,128, 64, 64, 64, 0 ,  0,  0 ,  0,  0 ]
+
+
+lr = 0.00004 
+batch size=500
+
+Very interesting resault. We have the accuracy to increase as the SNR falls. Its not the first time I see that and I need to investigate why and when this happens. Its not very trustworthy. 
+
+2.
+
+CORE =     ['C','C','C','C','C','C','F','D','DR','D','DR']
+MAX_POOL = [  0,  8,  0,  6,  0,  4, 0 ,  0,  0 ,  0,  0 ]
+FILTERS =  [ 32, 32, 64, 64,128,128, 0 ,256, 0.5, 128, 0.5]
+K_SIZE =   [256,128,128, 64, 64, 64, 0 ,  0,  0 ,  0,  0 ]
+
+
+lr = 0.00004
+batch size=500
+
+In this case the training happened until snr 2 and the performance still incrases. I tested it with different data and it good.
+Althoug it might be overfiting due to the lack of big template bank!!!
+
+3.
+
+CORE =     ['C','C','C','C','C','C','F','D','DR','D','DR']
+MAX_POOL = [  0,  8,  0,  6,  0,  4, 0 ,  0,  0 ,  0,  0 ]
+FILTERS =  [ 32, 32, 64, 64,128,128, 0 ,256, 0.5, 128, 0.5]
+K_SIZE =   [256,128,128, 64, 64, 64, 0 ,  0,  0 ,  0,  0 ]
+
+
+lr = 0.00001
+batch size=500
+
+In this case the training happened until snr 4 and the performance still incrases. I don't know what causes this. 
+
+3.
+
+CORE =     ['C','C','C','C','C','C','F','D','DR','D','DR']
+MAX_POOL = [  0,  8,  0,  6,  0,  4, 0 ,  0,  0 ,  0,  0 ]
+FILTERS =  [ 32, 32, 64, 64,128,128, 0 ,256, 0.5, 128, 0.5]
+K_SIZE =   [256,128,128, 64, 64, 64, 0 ,  0,  0 ,  0,  0 ]
+
+
+lr = 0.00001
+batch size=50
+
+I used datasets with size of 1000. Apparently the problem was overfiting on the CBCs because they were only 1500.

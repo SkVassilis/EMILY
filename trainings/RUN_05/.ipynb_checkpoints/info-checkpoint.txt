@@ -1,0 +1,47 @@
+1.
+
+CORE =     ['C','C','C','C','C','C','F','D','DR','D','DR']
+MAX_POOL = [  0,  8,  0,  6,  0,  4, 0 ,  0,  0 ,  0,  0 ]
+FILTERS =  [ 32, 32, 64, 64,128,128, 0 ,256, 0.5, 128, 0.5]
+K_SIZE =   [256,128,128, 64, 64, 64, 0 ,  0,  0 ,  0,  0 ]
+
+
+lr = 0.0004 
+batch size=500
+
+
+The resault was unanurally good. I think it learns how to recognise each instantiation. Lowering the K_SIZE and FILTERS will brink it back to normal.
+
+
+
+2.
+
+CORE =     ['C','C','C','C','C','C','F','D','DR','D','DR']
+MAX_POOL = [  0,  8,  0,  6,  0,  4, 0 ,  0,  0 ,  0,  0 ]
+FILTERS =  [ 16, 16, 32, 32, 64, 64, 0 ,128, 0.5, 64, 0.5]
+K_SIZE =   [128, 64, 64, 32, 32, 32, 0 ,  0,  0 ,  0,  0 ]
+
+
+
+lr = 0.0001
+batch size=500
+
+The resault is very good 99% on snr 10 and 97% on snr 6. Although I am sceptical because this could be just due to the fact I use different combinations of same segments. I will have to check with less number of instantiations in the generation of data to be sure. This will be RUN_06
+
+
+3.
+CORE =     ['C','C','C','C','C','C','F','D','DR','D','DR']
+MAX_POOL = [  0,  8,  0,  6,  0,  4, 0 ,  0,  0 ,  0,  0 ]
+FILTERS =  [ 16, 16, 32, 32, 64, 64, 0 ,128, 0.5, 64, 0.5]
+K_SIZE =   [256,128,128, 64, 64, 64, 0 ,  0,  0 ,  0,  0 ]
+
+
+PM=[CORE,MAX_POOL,FILTERS,K_SIZE]
+in_shape = (8192,3)
+
+lr = 0.0001
+batch size=500
+
+Apparently we have the network overfit on something I am not sure again what it is. When I test it with another noise and cbc dataset is around 2% FP and 20% FN for SNR 10 witch doesn't change much for snr6.
+
+

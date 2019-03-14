@@ -1,0 +1,40 @@
+Using TensorFlow backend.
+INPUT <------ SHAPE: (8192, 3)
+CONV 1D --> FILTERS:  16 KERNEL SIZE: 256 
+Bach Normalization
+CONV 1D --> FILTERS:  16 KERNEL SIZE: 128 
+Bach Normalization
+MAX POOL 1D --> KERNEL SHAPE: 8 STRIDE: 8 
+Bach Normalization
+CONV 1D --> FILTERS:  32 KERNEL SIZE: 128 
+Bach Normalization
+CONV 1D --> FILTERS:  32 KERNEL SIZE: 64 
+Bach Normalization
+MAX POOL 1D --> KERNEL SHAPE: 6 STRIDE: 6 
+Bach Normalization
+CONV 1D --> FILTERS:  64 KERNEL SIZE: 64 
+Bach Normalization
+CONV 1D --> FILTERS:  64 KERNEL SIZE: 64 
+Bach Normalization
+MAX POOL 1D --> KERNEL SHAPE: 4 STRIDE: 4 
+Bach Normalization
+<---- FLATTEN ---->
+DENSE --> FILTERS: 128
+Bach Normalization
+DROP OUT --> 50  % 
+DENSE --> FILTERS:  64
+Bach Normalization
+DROP OUT --> 50  % 
+OUTPUT --> SOFTMAX 2 CLASSES
+Traceback (most recent call last):
+  File "time_net.py", line 43, in <module>
+    ,dataset = data_fusion([CBC[0],NOISE[0]],[10000,10000])              
+  File "/home/vasileios.skliris/EMILY/emily.py", line 536, in data_fusion
+    data = io.loadmat(data_source_file+name+'.mat')
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/scipy/io/matlab/mio.py", line 141, in loadmat
+    MR, file_opened = mat_reader_factory(file_name, appendmat, **kwargs)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/scipy/io/matlab/mio.py", line 64, in mat_reader_factory
+    byte_stream, file_opened = _open_file(file_name, appendmat)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/scipy/io/matlab/mio.py", line 39, in _open_file
+    return open(file_like, 'rb'), True
+IOError: [Errno 2] No such file or directory: '/home/vasileios.skliris/EMILY/datasets/cbc/cbc01/HLV_time_cbc_with_real_noise_SNR20__lagsXM.mat'

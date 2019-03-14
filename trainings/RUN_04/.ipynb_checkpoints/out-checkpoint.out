@@ -1,0 +1,41 @@
+Using TensorFlow backend.
+Traceback (most recent call last):
+  File "time_net.py", line 20, in <module>
+    , verbose=True)
+  File "/home/vasileios.skliris/EMILY/emily.py", line 135, in conv_model_1D
+    model.add(Conv1D(filters=FILTERS[i], kernel_size=K_SIZE[i], activation='elu'))
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/keras/engine/sequential.py", line 187, in add
+    output_tensor = layer(self.outputs[0])
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/keras/engine/base_layer.py", line 460, in __call__
+    output = self.call(inputs, **kwargs)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/keras/layers/convolutional.py", line 160, in call
+    dilation_rate=self.dilation_rate[0])
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/keras/backend/tensorflow_backend.py", line 3524, in conv1d
+    data_format=tf_data_format)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/ops/nn_ops.py", line 780, in convolution
+    return op(input, filter)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/ops/nn_ops.py", line 868, in __call__
+    return self.conv_op(inp, filter)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/ops/nn_ops.py", line 520, in __call__
+    return self.call(inp, filter)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/ops/nn_ops.py", line 204, in __call__
+    name=self.name)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/ops/nn_ops.py", line 193, in _conv1d
+    name=name)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/util/deprecation.py", line 497, in new_func
+    return func(*args, **kwargs)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/util/deprecation.py", line 497, in new_func
+    return func(*args, **kwargs)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/ops/nn_ops.py", line 2484, in conv1d
+    data_format=data_format)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/ops/gen_nn_ops.py", line 956, in conv2d
+    data_format=data_format, dilations=dilations, name=name)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/framework/op_def_library.py", line 787, in _apply_op_helper
+    op_def=op_def)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/framework/ops.py", line 3414, in create_op
+    op_def=op_def)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/framework/ops.py", line 1756, in __init__
+    control_input_ops)
+  File "/home/vasileios.skliris/.local/lib/python2.7/site-packages/tensorflow/python/framework/ops.py", line 1592, in _create_c_op
+    raise ValueError(str(e))
+ValueError: Negative dimension size caused by subtracting 128 from 120 for 'conv1d_5/convolution/Conv2D' (op: 'Conv2D') with input shapes: [?,1,120,64], [1,128,64,128].
