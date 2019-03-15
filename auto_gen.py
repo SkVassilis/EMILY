@@ -106,10 +106,13 @@ def auto_gen(set_type
 
     if lags==1:
         duration_need = size*num_of_sets*length
+        tail_crop=0
     if lags%2 == 0:
         duration_need = ceil(size*num_of_sets/(lags*(lags-2)))*lags*length
+        tail_crop=lags*(lags-2)
     if lags%2 != 0 and lags !=1 :
         duration_need = ceil(size*num_of_sets/(lags*(lags-1)))*lags*length
+        tail_crop=lags*(lags-1)
 
 
     # Creation of lists that indicate characteristics of the segments based on the duration needed. 
@@ -132,7 +135,7 @@ def auto_gen(set_type
             gps_time.append(int(gps))
             seg_list.append([date,seg])
 
-            duration_total+=(int(dur)-3*t)   # I initialy had 2 insted of 3 but it was overflowing
+            duration_total+=(int(dur)-2*t-tail_crop)   # I initialy had 2 insted of 3 but it was overflowing
             print('    '+seg)
 
             if duration_total > duration_need: break
@@ -168,11 +171,11 @@ def auto_gen(set_type
             # Here we infere the local size given the lags used in the method
 
             if lags==1:    # zero lag case
-                local_size=ceil((duration[i]-3*t)/length)
+                local_size=ceil((duration[i]-2*t-tail_crop)/length)
             if lags%2 == 0:
-                local_size=ceil((duration[i]-3*t)/length/lags)*lags*(lags-2)
+                local_size=ceil((duration[i]-2*t-tail_crop)/length/lags)*lags*(lags-2)
             if lags%2 != 0 and lags !=1 :
-                local_size=ceil((duration[i]-3*t)/length/lags)*lags*(lags-1)
+                local_size=ceil((duration[i]-2*t-tail_crop)/length/lags)*lags*(lags-1)
 
             # starting point always begins with the window of the psd to avoid deformed data of the begining    
             local_starting_point=t
@@ -279,11 +282,11 @@ def auto_gen(set_type
             # Here we infere the local size given the lags used in the method
 
             if lags==1:    # zero lag case
-                local_size=ceil((duration[i]-3*t)/length)
+                local_size=ceil((duration[i]-2*t-tail_crop)/length)
             if lags%2 == 0:
-                local_size=ceil((duration[i]-3*t)/length/lags)*lags*(lags-2)
+                local_size=ceil((duration[i]-2*t-tail_crop)/length/lags)*lags*(lags-2)
             if lags%2 != 0 and lags !=1 :
-                local_size=ceil((duration[i]-3*t)/length/lags)*lags*(lags-1)
+                local_size=ceil((duration[i]-2*t-tail_crop)/length/lags)*lags*(lags-1)
                 
 
             # starting point always begins with the window of the psd to avoid deformed data of the begining    
@@ -451,7 +454,7 @@ def auto_gen(set_type
                                ',t='+str(t)+             
                                ',batch_size='+str(lags)+
                                ',starting_point='+str(d['start_point'][i])+
-                               ',name=\''+str(d['name'][i])+'\''+
+                               ',name=\''+str(d['name'][i])+'_\''+
                                ',destination_path=\''+path+dir_name+'/\''+
                                ',demo=False)')
                     
