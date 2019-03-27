@@ -1,15 +1,15 @@
-import os
 from math import ceil
 import numpy as np
+import os
 
 # This function generates automaticaly training sets given the options. After it is run you need to run the next one to give the dataset its final form
 
 def auto_gen(set_type
              ,date_ini
-             ,size=10000
-             ,fs=2048
-             ,length=4 
-             ,lags=11
+             ,size
+             ,fs
+             ,length 
+             ,lags
              ,t=32
              ,s_name=''):
     
@@ -41,7 +41,8 @@ def auto_gen(set_type
         # detectors
         for d in set_type[2]:
             if (d!='H' and d!='L' and d!='V' and d!='K'): 
-                raise ValueError('Not acceptable character for detector. You should include: \nH for LIGO Hanford\nL for LIGO Livingston \nV for Virgo \nK for KAGRA\nFor example: \'HLV\', \'HLVK\'')
+                raise ValueError('Not acceptable character for detector. You should include:'
+                +' \nH for LIGO Hanford\nL for LIGO Livingston \nV for Virgo \nK for KAGRA\nFor example: \'HLV\', \'HLVK\'')
         
         if (isinstance(set_type[3],int) and set_type[3]>0):
             num_of_sets=set_type[3] 
@@ -67,7 +68,9 @@ def auto_gen(set_type
         # detectors
         for d in set_type[2]:
             if (d!='H' and d!='L' and d!='V' and d!='K'): 
-                raise ValueError('Not acceptable character for detector. You should include: \nH for LIGO Hanford\nL for LIGO Livingston \nV for Virgo \nK for KAGRA\nFor example: \'HLV\', \'HLVK\'')
+                raise ValueError('Not acceptable character for detector.'
+                    +' You should include: \nH for LIGO Hanford\nL for LIGO Livingston \nV'
+                    +' for Virgo \nK for KAGRA\nFor example: \'HLV\', \'HLVK\'')
 
 
         if set_type[3] in dirlist('/home/vasileios.skliris/EMILY/injections/cbcs'):
@@ -92,7 +95,8 @@ def auto_gen(set_type
             spect_b=set_type[5]
             phase_b=set_type[6]
             res=set_type[8]
-    # Calculation of how many segments we need for the given requirements. There is a starting date and if it needs more it goes to the next one.
+    # Calculation of how many segments we need for the given requirements. 
+    #There is a starting date and if it needs more it goes to the next one.
 
     
     date_list=dirlist('/home/vasileios.skliris/EMILY/ligo_data/2048')
@@ -109,10 +113,10 @@ def auto_gen(set_type
         tail_crop=0
     if lags%2 == 0:
         duration_need = ceil(size*num_of_sets/(lags*(lags-2)))*lags*length
-        tail_crop=lags*(lags-2)
+        tail_crop=lags*length
     if lags%2 != 0 and lags !=1 :
         duration_need = ceil(size*num_of_sets/(lags*(lags-1)))*lags*length
-        tail_crop=lags*(lags-1)
+        tail_crop=lags*length
 
 
     # Creation of lists that indicate characteristics of the segments based on the duration needed. 
@@ -135,7 +139,7 @@ def auto_gen(set_type
             gps_time.append(int(gps))
             seg_list.append([date,seg])
 
-            duration_total+=(int(dur)-2*t-tail_crop)   # I initialy had 2 insted of 3 but it was overflowing
+            duration_total+=(int(dur)-3*t-tail_crop)   # I initialy had 2 insted of 3 but it was overflowing
             print('    '+seg)
 
             if duration_total > duration_need: break
@@ -171,11 +175,11 @@ def auto_gen(set_type
             # Here we infere the local size given the lags used in the method
 
             if lags==1:    # zero lag case
-                local_size=ceil((duration[i]-2*t-tail_crop)/length)
+                local_size=ceil((duration[i]-3*t-tail_crop)/length)
             if lags%2 == 0:
-                local_size=ceil((duration[i]-2*t-tail_crop)/length/lags)*lags*(lags-2)
+                local_size=ceil((duration[i]-3*t-tail_crop)/length/lags)*lags*(lags-2)
             if lags%2 != 0 and lags !=1 :
-                local_size=ceil((duration[i]-2*t-tail_crop)/length/lags)*lags*(lags-1)
+                local_size=ceil((duration[i]-3*t-tail_crop)/length/lags)*lags*(lags-1)
 
             # starting point always begins with the window of the psd to avoid deformed data of the begining    
             local_starting_point=t
@@ -203,7 +207,7 @@ def auto_gen(set_type
                 if number_of_set_counter == size:
                     number_of_set.append(set_num)
                     if size_list[-1]==size: 
-                        name_list.append('No_'+str(set_num)+'_')
+                        name_list.append(str(set_num))
                     else:
                         name_list.append('part_of_'+str(set_num))
                     set_num+=1
@@ -213,6 +217,7 @@ def auto_gen(set_type
                 elif number_of_set_counter < size:
                     number_of_set.append(set_num)
                     name_list.append('part_of_'+str(set_num))
+                print(len(seg_list_2), len(size_list), len(starting_point_list) ,len(name_list))
 
 
             if (len(size_list) == 0 or number_of_set_counter==0):
@@ -233,15 +238,14 @@ def auto_gen(set_type
                     if number_of_set_counter == size:
                         number_of_set.append(set_num)
                         if size_list[-1]==size: 
-                            name_list.append('No_'+str(set_num)+'_')
+                            name_list.append(str(set_num))
                         else:
                             name_list.append('part_of_'+str(set_num))
                         set_num+=1
-                        if set_num > num_of_sets: break
+                        if set_num >= num_of_sets: break
                         number_of_set_counter=0
 
-
-            if (local_size < size and local_size >0):
+            if (local_size < size and local_size >0 and set_num < num_of_sets):
                 # Generate data with size 'local_size' with local name to be fused with later one
                 size_list.append(local_size)
                 seg_list_2.append(seg_list[i])
@@ -254,7 +258,7 @@ def auto_gen(set_type
                 if number_of_set_counter == size:
                     number_of_set.append(set_num)
                     if size_list[-1]==size: 
-                        name_list.append('No_'+str(set_num)+'_')
+                        name_list.append(str(set_num))
                     else:
                         name_list.append('part_of_'+str(set_num))
                     set_num+=1
@@ -264,6 +268,10 @@ def auto_gen(set_type
                 elif number_of_set_counter < size:
                     number_of_set.append(set_num)
                     name_list.append('part_of_'+str(set_num))
+                    
+                    
+                print(len(seg_list_2), len(size_list), len(starting_point_list) ,len(name_list))
+
 
 
 
@@ -282,11 +290,11 @@ def auto_gen(set_type
             # Here we infere the local size given the lags used in the method
 
             if lags==1:    # zero lag case
-                local_size=ceil((duration[i]-2*t-tail_crop)/length)
+                local_size=ceil((duration[i]-3*t-tail_crop)/length)
             if lags%2 == 0:
-                local_size=ceil((duration[i]-2*t-tail_crop)/length/lags)*lags*(lags-2)
+                local_size=ceil((duration[i]-3*t-tail_crop)/length/lags)*lags*(lags-2)
             if lags%2 != 0 and lags !=1 :
-                local_size=ceil((duration[i]-2*t-tail_crop)/length/lags)*lags*(lags-1)
+                local_size=ceil((duration[i]-3*t-tail_crop)/length/lags)*lags*(lags-1)
                 
 
             # starting point always begins with the window of the psd to avoid deformed data of the begining    
@@ -325,6 +333,9 @@ def auto_gen(set_type
                 elif number_of_set_counter < size:
                     number_of_set.append(snr_list[set_num])
                     name_list.append('part_of_'+str(snr_list[set_num])+s_name)
+                    
+                print(len(seg_list_2), len(size_list), len(starting_point_list) ,len(name_list))
+
 
             if (len(size_list) == 0 or number_of_set_counter==0):
                 while local_size >= size:
@@ -352,7 +363,11 @@ def auto_gen(set_type
                         number_of_set_counter=0
 
 
-            if (local_size < size and local_size >0):
+                print(len(seg_list_2), len(size_list), len(starting_point_list) ,len(name_list))
+
+
+
+            if (local_size < size and local_size >0 and set_num < num_of_sets):
                 # Generate data with size 'local_size' with local name to be fused with later one
                 size_list.append(local_size)
                 seg_list_2.append(seg_list[i])
@@ -375,11 +390,15 @@ def auto_gen(set_type
                 elif number_of_set_counter < size:
                     number_of_set.append(snr_list[set_num])
                     name_list.append('part_of_'+str(snr_list[set_num])+s_name)
+        
+                print(len(seg_list_2), len(size_list), len(starting_point_list) ,len(name_list))
+
                 
 
     d={'segment' : seg_list_2, 'size' : size_list , 'start_point' : starting_point_list, 'set' : number_of_set, 'name' : name_list}
 
     print('These are the details of the datasets to be generated: \n')
+    print((d['segment']), (d['size']),(d['start_point']) ,(d['name']))
     for i in range(len(d['segment'])):
         print(d['segment'][i], d['size'][i], d['start_point'][i] ,d['name'][i])
         
@@ -472,7 +491,7 @@ def auto_gen(set_type
                                ',t='+str(t)+             
                                ',batch_size='+str(lags)+
                                ',starting_point='+str(d['start_point'][i])+
-                               ',name=\''+str(d['name'][i])+'\''+
+                               ',name=\''+str(d['name'][i])+'_\''+
                                ',destination_path=\''+path+dir_name+'/\''+
                                ',demo=False)')
                 
@@ -487,7 +506,12 @@ def auto_gen(set_type
                 
         
         with open(path+dir_name+'/info.txt','w') as f3:
-            f3.write('INFO ABOUT DATASETS GENERATION \n\n\n\n\n')
+            f3.write('INFO ABOUT DATASETS GENERATION \n\n')
+            f3.write('fs: '+str(fs)+'\n')
+            f3.write('length: '+str(length)+'\n')
+            f3.write('window: '+str(t)+'\n')
+            f3.write('lags: '+str(lags)+'\n'+'\n')
+            
             for i in range(len(d['segment'])):
                 f3.write(d['segment'][i][0]+' '+d['segment'][i][1]+' '+str(d['size'][i])+' '+str(d['start_point'][i])+'_'+d['name'][i]+'\n')
             

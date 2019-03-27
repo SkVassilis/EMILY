@@ -1,0 +1,4 @@
+  File "time_net.py", line 65
+    historia.append(train_model(model
+           ^
+SyntaxError: invalid syntax

@@ -1,0 +1,38 @@
+1.
+
+CORE =     ['C','C','C','C','C','C','F','D','DR','D','DR']
+MAX_POOL = [  0,  8,  0,  6,  0,  4, 0 ,  0,  0 ,  0,  0 ]
+FILTERS =  [ 32, 32, 64, 64,128,128, 0 ,256, 0.5, 128, 0.5]
+K_SIZE =   [256,128,128, 64, 64, 64, 0 ,  0,  0 ,  0,  0 ]
+
+lr = 0.0001
+batch size=500
+
+
+
+2.
+
+CORE =     ['C','C','C','C','C','C','F','D','DR','D','DR']
+MAX_POOL = [  0,  8,  0,  6,  0,  4, 0 ,  0,  0 ,  0,  0 ]
+FILTERS =  [ 16, 16, 32, 32, 64, 64, 0 ,128, 0.5, 64, 0.5]
+K_SIZE =   [128, 64, 64, 32, 32, 32, 0 ,  0,  0 ,  0,  0 ]
+
+lr = 0.0001
+batch size=500
+
+An unusual find. I wasn't expecting it to colapse like that. I will check 1 and 3 to see what I can find.
+
+
+
+3.
+CORE =     ['C','C','C','C','C','C','F','D','DR','D','DR']
+MAX_POOL = [  0,  8,  0,  6,  0,  4, 0 ,  0,  0 ,  0,  0 ]
+FILTERS =  [ 16, 16, 32, 32, 64, 64, 0 ,128, 0.5, 64, 0.5]
+K_SIZE =   [256,128,128, 64, 64, 64, 0 ,  0,  0 ,  0,  0 ]
+
+lr = 0.0001
+batch size=500
+
+
+
+

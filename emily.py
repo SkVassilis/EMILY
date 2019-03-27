@@ -1,5 +1,3 @@
-from __future__ import division, print_function
-
 import matplotlib as mpl
 mpl.use('Agg')
 
@@ -69,11 +67,12 @@ def SNR(data,injection,background,maximum=True,fs=2048):
     
 def dirlist(filename):           # Creates a list of names of the files                   
     fn=os.listdir(filename)      # we are interested to use so that we can call 
-    for i in range(0,len(fn)-1): # them automaticaly all them automaticaly
-        if fn[i][0]=='.':
-            fn.pop(i)
-    fn.sort()
-    return fn
+    fn_clean=[]
+    for i in range(0,len(fn)):   # them automaticaly all them automaticaly
+        if fn[i][0]!='.':
+            fn_clean.append(fn[i])
+    fn_clean.sort()
+    return fn_clean
 
 #def load_noise(name,noise_file,detector): #  Loading the file with the real noise segment.
 #    noise=[]                              
@@ -105,6 +104,7 @@ def isPrime(n):
     return True
 
 def load_noise(fs,date_file,detector,name,ind='all'): #  Loading the file with the real noise segment.
+    #ind is an array or list
     noise=[]
     with open('/home/vasileios.skliris/EMILY/ligo_data/'+str(fs)+'/'+date_file+'/'+detector+'/'+name,'r') as f:
         if isinstance(ind,str) and ind=='all':
@@ -538,7 +538,7 @@ def data_fusion(names     #Takes as input the datasets name [, , , ...] files an
     
     XS,YS=[],[]
     for name in names:
-        data = io.loadmat(data_source_file+name+'.mat')
+        data = io.loadmat(data_source_file+name)
         X = data['data']
         Y = data['labels']
         print('Loading file ...'+name+' with data shape:  ',X.shape)
@@ -565,8 +565,9 @@ def data_fusion(names     #Takes as input the datasets name [, , , ...] files an
     
     if isinstance(save,str):
         d={'data': data,'labels': labels}             
-        io.savemat('/home/vasileios.skliris/EMILY/datasets/'+save+'.mat',d)
-        print('File '+save+'.mat was created')
+        io.savemat(save,d)
+        print('File '+save+' was created')
+        return
     else:
         return(data, labels)
 
@@ -724,7 +725,8 @@ def data_generator_cbc(parameters
     noise_type = parameters[1]
     SNR_FIN = parameters[2]
 
-    lab={10:'X', 100:'C', 1000:'M', 10000:'XM',100000:'CM'}  # Labels used in saving file
+    #lab={10:'X', 100:'C', 1000:'M', 10000:'XM',100000:'CM'}  # Labels used in saving file
+    lab={}
     if size not in lab:
         lab[size]=str(size)
 
@@ -872,7 +874,7 @@ def data_generator_cbc(parameters
                 injH_cal=np.real(np.fft.ifft(fftH_cal*fs))
 
                 HF=TimeSeries(XH+injH_cal,sample_rate=fs,t0=0)
-                h=HF.whiten(1,0.5,asd=asdH)#[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
+                h=HF.whiten(1,0.5,asd=asdH)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
 
 
             if 'L' in detectors:
@@ -881,7 +883,7 @@ def data_generator_cbc(parameters
                 injL_cal=np.real(np.fft.ifft(fftL_cal*fs))
 
                 LF=TimeSeries(XL+injL_cal,sample_rate=fs,t0=0)
-                l=LF.whiten(1,0.5,asd=asdL)#[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
+                l=LF.whiten(1,0.5,asd=asdL)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
 
             if 'V' in detectors:
 
@@ -889,7 +891,7 @@ def data_generator_cbc(parameters
                 injV_cal=np.real(np.fft.ifft(fftV_cal*fs))
 
                 VF=TimeSeries(XV+injV_cal,sample_rate=fs,t0=0)
-                v=VF.whiten(1,0.5,asd=asdV)#[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
+                v=VF.whiten(1,0.5,asd=asdV)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
 
             dumie=[]
             if 'H' in detectors: dumie.append(np.array(h))
@@ -1056,7 +1058,7 @@ def data_generator_cbc(parameters
                 injH_cal=np.real(np.fft.ifft(fftH_cal*fs))
 
                 HF=TimeSeries(XH+injH_cal,sample_rate=fs,t0=0)
-                h=HF.whiten(1,0.5,asd=asdH)#[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
+                h=HF.whiten(1,0.5,asd=asdH)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
                 
             if 'L' in detectors:
 
@@ -1064,7 +1066,7 @@ def data_generator_cbc(parameters
                 injL_cal=np.real(np.fft.ifft(fftL_cal*fs))
 
                 LF=TimeSeries(XL+injL_cal,sample_rate=fs,t0=0)
-                l=LF.whiten(1,0.5,asd=asdL)#[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
+                l=LF.whiten(1,0.5,asd=asdL)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
 
             if 'V' in detectors:
 
@@ -1072,7 +1074,7 @@ def data_generator_cbc(parameters
                 injV_cal=np.real(np.fft.ifft(fftV_cal*fs))
 
                 VF=TimeSeries(XV+injV_cal,sample_rate=fs,t0=0)
-                v=VF.whiten(1,0.5,asd=asdV)#[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
+                v=VF.whiten(1,0.5,asd=asdV)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
 
             dumie=[]
             if 'H' in detectors: dumie.append(np.array(h))
@@ -1190,7 +1192,6 @@ def data_generator_cbc(parameters
 
                 noiseV=noise_segV[ind['V'][i]:ind['V'][i]+t*fs]           # Calling the real noise segments
                 
-                print(len(noiseV),ind['V'][i]/fs,t,fs)   
 
                 
                 p, f = plt.psd(noiseV, Fs=fs,NFFT=fs)                 # Calculatint the psd of FFT=1s
@@ -1244,7 +1245,7 @@ def data_generator_cbc(parameters
                 injH_cal=np.real(np.fft.ifft(fftH_cal*fs))
 
                 HF=TimeSeries(noiseH+injH_cal,sample_rate=fs,t0=0)
-                h=HF.whiten(1,0.5,asd=asdH)#[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
+                h=HF.whiten(1,0.5,asd=asdH)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
 
             if 'L' in detectors:
 
@@ -1252,7 +1253,7 @@ def data_generator_cbc(parameters
                 injL_cal=np.real(np.fft.ifft(fftL_cal*fs))
                 
                 LF=TimeSeries(noiseL+injL_cal,sample_rate=fs,t0=0)
-                l=LF.whiten(1,0.5,asd=asdL)#[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
+                l=LF.whiten(1,0.5,asd=asdL)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
                 
 
             if 'V' in detectors:
@@ -1261,7 +1262,7 @@ def data_generator_cbc(parameters
                 injV_cal=np.real(np.fft.ifft(fftV_cal*fs))
 
                 VF=TimeSeries(noiseV+injV_cal,sample_rate=fs,t0=0)
-                v=VF.whiten(1,0.5,asd=asdV)#[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
+                v=VF.whiten(1,0.5,asd=asdV)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
             
 
             dumie=[]
@@ -1541,7 +1542,7 @@ def data_generator_noise(noise_type
     #                        
     ########## INPUT CHECKING ## 
 
-    lab={10:'X', 100:'C', 1000:'M', 10000:'XM',100000:'CM'}  # Labels used in saving file
+    lab={}#lab={10:'X', 100:'C', 1000:'M', 10000:'XM',100000:'CM'}  # Labels used in saving file
     if size not in lab:
         lab[size]=str(size)    
     
@@ -1561,7 +1562,7 @@ def data_generator_noise(noise_type
                 H_back=TimeSeries(XH,sample_rate=fs)                      # Making the noise a TimeSeries
                 asdH=H_back.asd(1,0.5)                                    # Calculating the ASD so tha we can use it for
                                                                           # whitening later
-                h=H_back.whiten(1,0.5,asd=asdH)#[int(((t-length)/2-1)*fs):int(((t+length)/2-1)*fs)]#Whitening final data
+                h=H_back.whiten(1,0.5,asd=asdH)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)]#Whitening final data
 
             if 'L'in detectors:
 
@@ -1569,7 +1570,7 @@ def data_generator_noise(noise_type
                 L_back=TimeSeries(XL,sample_rate=fs)                      # Making the noise a TimeSeries
                 asdL=L_back.asd(1,0.5)                                    # Calculating the ASD so tha we can use it for 
                                                                           # whitening later
-                l=L_back.whiten(1,0.5,asd=asdL)#[int(((t-length)/2-1)*fs):int(((t+length)/2-1)*fs)]#Whitening final data
+                l=L_back.whiten(1,0.5,asd=asdL)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)]#Whitening final data
 
             if 'V'in detectors:
 
@@ -1577,7 +1578,7 @@ def data_generator_noise(noise_type
                 V_back=TimeSeries(XV,sample_rate=fs)                      # Making the noise a TimeSeries
                 asdV=V_back.asd(1,0.5)                                    # Calculating the ASD so tha we can use it for
                                                                           # whitening later                
-                v=V_back.whiten(1,0.5,asd=asdV)#[int(((t-length)/2-1)*fs):int(((t+length)/2-1)*fs)]#Whitening final data
+                v=V_back.whiten(1,0.5,asd=asdV)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)]#Whitening final data
 
             dumie=[]
             if 'H' in detectors: dumie.append(np.array(h))
@@ -1620,7 +1621,7 @@ def data_generator_noise(noise_type
                 H_back=TimeSeries(XH,sample_rate=fs)                      # Making the noise a TimeSeries
                 asdH=H_back.asd(1,0.5)                                    # Calculating the ASD so tha we can use it for
                                                                           # whitening later
-                h=H_back.whiten(1,0.5,asd=asdH)#[int(((t-length)/2-1)*fs):int(((t+length)/2-1)*fs)] #Whitening final data
+                h=H_back.whiten(1,0.5,asd=asdH)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
 
             if 'L'in detectors:
                 
@@ -1632,7 +1633,7 @@ def data_generator_noise(noise_type
                 L_back=TimeSeries(XL,sample_rate=fs)                      # Making the noise a TimeSeries
                 asdL=L_back.asd(1,0.5)                                    # Calculating the ASD so tha we can use it for 
                                                                           # whitening later
-                l=L_back.whiten(1,0.5,asd=asdL)#[int(((t-length)/2-1)*fs):int(((t+length)/2-1)*fs)] #Whitening final data
+                l=L_back.whiten(1,0.5,asd=asdL)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
 
             if 'V'in detectors:
 
@@ -1644,7 +1645,7 @@ def data_generator_noise(noise_type
                 V_back=TimeSeries(XV,sample_rate=fs)                      # Making the noise a TimeSeries
                 asdV=V_back.asd(1,0.5)                                    # Calculating the ASD so tha we can use it for
                                                                           # whitening later                
-                v=V_back.whiten(1,0.5,asd=asdV)#[int(((t-length)/2-1)*fs):int(((t+length)/2-1)*fs)] #Whitening final data
+                v=V_back.whiten(1,0.5,asd=asdV)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] #Whitening final data
             
 
             dumie=[]
@@ -1685,7 +1686,7 @@ def data_generator_noise(noise_type
                 H_back=TimeSeries(noiseH,sample_rate=fs)                  # Making the noise a TimeSeries
                 asdH=H_back.asd(1,0.5)                                    # Calculating the ASD so tha we can use it for
                                                                           # whitening later                
-                h=H_back.whiten(1,0.5,asd=asdH)#[int(((t-length)/2-1)*fs):int(((t+length)/2-1)*fs)] # Whitening data
+                h=H_back.whiten(1,0.5,asd=asdH)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] # Whitening data
 
             if 'L'in detectors:
 
@@ -1693,7 +1694,7 @@ def data_generator_noise(noise_type
                 L_back=TimeSeries(noiseL,sample_rate=fs)                  # Making the noise a TimeSeries
                 asdL=L_back.asd(1,0.5)                                    # Calculating the ASD so tha we can use it for 
                                                                           # whitening later                
-                l=L_back.whiten(1,0.5,asd=asdL)#[int(((t-length)/2-1)*fs):int(((t+length)/2-1)*fs)] # Whitening data
+                l=L_back.whiten(1,0.5,asd=asdL)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] # Whitening data
 
 
             if 'V'in detectors:
@@ -1702,7 +1703,7 @@ def data_generator_noise(noise_type
                 V_back=TimeSeries(noiseV,sample_rate=fs)                  # Making the noise a TimeSeries
                 asdV=V_back.asd(1,0.5)                                    # Calculating the ASD so tha we can use it for
                                                                           # whitening later                
-                v=V_back.whiten(1,0.5,asd=asdV)#[int(((t-length)/2-1)*fs):int(((t+length)/2-1)*fs)] # Whitening data
+                v=V_back.whiten(1,0.5,asd=asdV)[int(((t-length)/2)*fs):int(((t+length)/2)*fs)] # Whitening data
 
 
             dumie=[]
